@@ -1,4 +1,3 @@
-#pragma once
 #include <fstream>
 #include <string>
 #include <vector>
@@ -12,7 +11,7 @@ std::vector<std::string> getFileNames() {
     std::ifstream in(helpfilename);
     if (in.is_open()) {
         while (std::getline(in, line)) {
-            if (line.find(".txt") != std::string::npos && line != helpfilename) {
+            if (line.find(".txt") != std::string::npos && line != helpfilename && line != "CMakeLists.txt") {
                 ans.push_back(line);
             }
         }
