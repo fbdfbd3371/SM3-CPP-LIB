@@ -2,7 +2,7 @@
 #include <math.h>
 #include <iostream>
 #include <assert.h>
-#include "../atmos-abstract.hpp"
+#include "atmos-abstract.hpp"
 
 class CAtmos4401: public CAtmosAbstract
 {
