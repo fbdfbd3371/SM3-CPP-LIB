@@ -1,15 +1,25 @@
 #include "atmos-4401.hpp"
 
-CAtmos* CAtmos::instance = nullptr;
+CAtmos4401* CAtmos4401::instance = nullptr;
 
-void CAtmos::getCoefficients(double height)
+/**
+ * @brief 
+ * @warning МЕТОД НЕ РЕАЛИЗОВАН. ДОЛЖЕН ВЫЗЫВАТЬ МЕТОД КЛАССА MISSLE ДЛЯ ПОЛУЧЕНИЯ АКТУАЛЬНОЙ ВЫСОТЫ.
+ */
+double CAtmos4401::getCrntHeight()
+{
+    ///@todo Сделать вызов метода из основного класса missle
+    return 1000;
+}
+
+void CAtmos4401::getCoefficients()
     {
         ///@todo change assert to smth
-        if (isnan(height)) {
+        if (isnan(getCrntHeight())) {
             printf("Atmos input error: height is NaN\n");
-            assert(!isnan(height));
+            assert(!isnan(getCrntHeight()));
         }
-        double geoph = geopotentialAltitude(height);       
+        double geoph = getGeopotentialHeight();       
         if ((geoph > -2000.0) && (geoph < 0.0))
         {
             B = -0.0065;
@@ -80,7 +90,7 @@ void CAtmos::getCoefficients(double height)
             He = 94000.0;
             Pe = 5.249022e-4;
         }
-        else if (height < 120000.0)
+        else if (getCrntHeight() < 120000.0)
         {
             B = 0.011;
             T = 212.0;
@@ -90,74 +100,76 @@ void CAtmos::getCoefficients(double height)
         else 
         {
             std::cout << "Atmos height error\t";
-            printf("h: %.6f\n", height);
+            printf("h: %.6f\n", getCrntHeight());
         }
     }
 
-CAtmos* CAtmos::getInstance()
+CAtmos4401* CAtmos4401::getInstance()
 {
     if(instance==nullptr)
     {
-        instance = new CAtmos;
+        instance = new CAtmos4401;
         return instance;
     }
 
     return instance;
 };
 
-double CAtmos::geopotentialAltitude(double height)
+double CAtmos4401::getGeopotentialHeight()
 {
-    HH = Rz * height / (Rz + height);
+    HH = Rz * getCrntHeight() / (Rz + getCrntHeight());
     return HH;
 }
 
-double CAtmos::H_to_h(double H) 
+double CAtmos4401::H_to_h(double H) 
 {
     return H * Rz / (Rz - H);
 }
 
-double CAtmos::gravityAcceleration(double height)
+double CAtmos4401::gravityAcceleration()
 {
-    g = g0 * pow(Rz / (Rz + height), 2.0);
+    g = g0 * pow(Rz / (Rz + getCrntHeight()), 2.0);
     return g;
 }
 
-double CAtmos::temperature(double height)
+double CAtmos4401::getTemperature()
 {
-    getCoefficients(height);        
-    TM = T + B * (geopotentialAltitude(height) - He);
-    if (height < 97000.0) {
-        TM *= ((height < 94000.0) ? 28.964420 : (28.82 + 0.158 * pow(1 - 7.5e-8 * pow(height - 94000.0, 2.0), 0.5) - 2.479e-4 * pow(97000.0 - height, 0.5))) / 28.964420;
+    getCoefficients();        
+    TM = T + B * (getGeopotentialHeight() - He);
+    if (getCrntHeight() < 97000.0) {
+        TM *= ((getCrntHeight() < 94000.0) ? 28.964420 : 
+        (28.82 + 0.158 * pow(1 - 7.5e-8 * pow(getCrntHeight() - 94000.0, 2.0), 0.5) - 2.479e-4 * pow(97000.0 - getCrntHeight(), 0.5))) / 28.964420;
     }
-    else if (height < 120000.0) {
-        TM *= ((height < 97500.0) ? 28.91007386 - (height - 97000.0) * 0.00012 : 28.85007386-0.0001511 * (height - 97500.0)) / 28.964420;
+    else if (getCrntHeight() < 120000.0) {
+        TM *= ((getCrntHeight() < 97500.0) ? 28.91007386 - (getCrntHeight() - 97000.0) * 0.00012 : 
+        28.85007386-0.0001511 * (getCrntHeight() - 97500.0)) / 28.964420;
     }    
     return TM;
 }
 
-double CAtmos::pressure(double height)
+double CAtmos4401::getPressure()
 {
-        getCoefficients(height);
+        getCoefficients();
         if (B != 0.0)
         {
-            P = Pe / pow(1 + B * (geopotentialAltitude(height) - He) / T, g0 / (B * R));
+            P = Pe / pow(1 + B * (getGeopotentialHeight() - He) / T, g0 / (B * R));
         }
         else
         {
-            P = Pe / pow(10.0, 0.434294 * g0 / R / temperature(height) * (geopotentialAltitude(height) - He));
+            P = Pe / pow(10.0, 0.434294 * g0 / R / getTemperature() * (getGeopotentialHeight() - He));
         }
         P *= 101325.0 / 760.0;
         return P;
     }
 
-double CAtmos::density(double height)
+double CAtmos4401::getDensity()
 {
-    ro = pressure(height) / (R * temperature(height));
+    ro = getPressure() / (R * getTemperature());
     return ro;
 }
 
-double CAtmos::soundVelocity(double height)
+double CAtmos4401::getSoundVelocity()
 {
-    a = 20.046796 * sqrt(temperature(height));
+    a = 20.046796 * sqrt(getTemperature());
     return a;
 }

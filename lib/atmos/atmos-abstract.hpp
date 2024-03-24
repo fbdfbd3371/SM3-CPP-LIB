@@ -6,6 +6,9 @@
  */
 class CAtmosAbstract
 {
+private:
+    virtual double getCrntHeight() = 0;
+
 public:
     /**
      * @brief Давление, [Па]

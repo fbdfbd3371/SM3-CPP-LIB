@@ -2,35 +2,38 @@
 #include <math.h>
 #include <iostream>
 #include <assert.h>
+#include "../atmos-abstract.hpp"
 
-class CAtmos 
+class CAtmos4401: public CAtmosAbstract
 {
-    static CAtmos* instance;
+    static CAtmos4401* instance;
 
     const double Rz = 6356767.0;
     const double g0 = 9.80665;
     const double R = 287.05287;
-    double height, HH, g, T, TM, He, B, Pe, P, ro, a;
+    double HH, g, T, TM, He, B, Pe, P, ro, a;
     
-    CAtmos() {}
+    CAtmos4401() {}
 
-    void getCoefficients(double height);
+    void getCoefficients();
+
+    double getCrntHeight() override;
     
 public:
 
-    static CAtmos* getInstance();
+    static CAtmos4401* getInstance();
     
-    double geopotentialAltitude(double height);
+    double getGeopotentialHeight() override;
     
     double H_to_h(double H);
     
-    double gravityAcceleration(double height);
+    double gravityAcceleration();
     
-    double temperature(double height);
+    double getTemperature() override;
     
-    double pressure(double height);
+    double getPressure() override;
     
-    double density(double height);
+    double getDensity() override;
 
-    double soundVelocity(double height);
+    double getSoundVelocity() override;
 };
