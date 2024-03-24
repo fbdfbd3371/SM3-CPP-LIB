@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.6)
+project(atmos)
+add_library(atmos-4401 atmos-4401.cpp)
+include_directories(../)
+add_executable(example example.cpp)
+target_link_libraries(example atmos-4401)
