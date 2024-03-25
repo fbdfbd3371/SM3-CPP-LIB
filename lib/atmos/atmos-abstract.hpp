@@ -21,11 +21,6 @@ public:
     virtual double getDensity() = 0;
 
     /**
-     * @brief Геопотенциальная высота, [м]
-     */
-    virtual double getGeopotentialHeight() = 0;
-
-    /**
      * @brief Температура, [К]
      */
     virtual double getTemperature() = 0;

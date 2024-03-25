@@ -23,7 +23,7 @@ public:
 
     static CAtmos4401* getInstance();
     
-    double getGeopotentialHeight() override;
+    double getGeopotentialHeight();
     
     double H_to_h(double H);
     
